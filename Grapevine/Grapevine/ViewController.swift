@@ -32,6 +32,8 @@ class ViewController: UIViewController {
   @IBOutlet private weak var summaryLabel: UILabel!
   @IBOutlet private weak var pageControl: UIPageControl!
 
+  private let horizontalPadding: CGFloat = 15.0
+  
   // MARK: - View Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -41,15 +43,19 @@ class ViewController: UIViewController {
 //    summaryLabel.hidden = true
 //    pageControl.hidden = true
     
+    let metrics = ["hp": horizontalPadding, "iconImageViewWidth":30.0]
+    
     // 1
     // Create a views dictionary that holds string representations of views to resolve inside the format string.
-    let views = ["iconImageView": iconImageView,
+    let views: [String: AnyObject] = ["iconImageView": iconImageView,
     "appNameLabel": appNameLabel,
     "skipButton": skipButton,
     "appImageView": appImageView,
     "welcomeLabel": welcomeLabel,
     "summaryLabel": summaryLabel,
-    "pageControl": pageControl]
+    "pageControl": pageControl,
+    "topLayoutGuide": topLayoutGuide,
+    "bottomLayoutGuide": bottomLayoutGuide]
     
     // 2
     // Create a mutable array of constraints. You'll build this up in the rest of the code.
@@ -57,33 +63,46 @@ class ViewController: UIViewController {
     
     // 3
     // set up vertical constraints for the iconImageView, placing its top edge 20 points from its superview's top edge, with a height of 30 points.
-    let iconVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-20-[iconImageView(30)]", options: [], metrics: nil, views: views)
+    let iconVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[topLayoutGuide]-[iconImageView(30)]", options: [], metrics: nil, views: views)
     allConstraints += iconVerticalConstraints
     
     // 4
     // Set up vertical constraints for the appNameLabel, placing its top edge 23 points from its superview's top edge.
-    let nameLabelVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-23-[appNameLabel]", options: [], metrics: nil, views: views)
-    allConstraints += nameLabelVerticalConstraints
+//    let nameLabelVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-23-[appNameLabel]", options: [], metrics: nil, views: views)
+//    allConstraints += nameLabelVerticalConstraints
     
     // 5
     // Set up vertical constraints for the skipButton, placing its top edge 20 points from its superview's top edge.
-    let skipButtonVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-20-[skipButton]", options: [], metrics: nil, views: views)
-    allConstraints += skipButtonVerticalConstraints
+//    let skipButtonVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-20-[skipButton]", options: [], metrics: nil, views: views)
+//    allConstraints += skipButtonVerticalConstraints
     
     // 6
     // set horizontal constraint
-    let topRowHorizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-15-[iconImageView(30)]-[appNameLabel]-[skipButton]-15-|", options: [], metrics: nil, views: views)
+    let topRowHorizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-hp-[iconImageView(30)]-[appNameLabel]-[skipButton]-hp-|", options: [.AlignAllCenterY], metrics: metrics, views: views)
     allConstraints += topRowHorizontalConstraints
     
     // 1
-    let summaryHorizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-15-[summaryLabel]-15-|", options: [], metrics: nil, views: views)
+    let summaryHorizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-hp-[summaryLabel]-hp-|", options: [], metrics: metrics, views: views)
     allConstraints += summaryHorizontalConstraints
     
-    let welcomeHorizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-15-[welcomeLabel]-15-|", options: [], metrics: nil, views: views)
-    allConstraints += welcomeHorizontalConstraints
+//    let welcomeHorizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-15-[welcomeLabel]-15-|", options: [], metrics: nil, views: views)
+//    allConstraints += welcomeHorizontalConstraints
     
     // 2
-//    let iconToImageVertical
+    let iconToImageVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[iconImageView]-10-[appImageView]", options: [], metrics: nil, views: views)
+    allConstraints += iconToImageVerticalConstraints
+    
+    // 3
+    let imageToWelcomeVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[appImageView]-10-[welcomeLabel]", options: [.AlignAllCenterX], metrics: nil, views: views)
+    allConstraints += imageToWelcomeVerticalConstraints
+    
+    // 4
+    let summaryLabelVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[welcomeLabel]-4-[summaryLabel]", options: [.AlignAllLeading, .AlignAllTrailing], metrics: nil, views: views)
+    allConstraints += summaryLabelVerticalConstraints
+    
+    // 5
+    let summaryToPageVerticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[summaryLabel]-15-[pageControl(9)]-15-|", options: [.AlignAllCenterX], metrics: nil, views: views)
+    allConstraints += summaryToPageVerticalConstraints
     
     // 7
     // activate the layout constraints
